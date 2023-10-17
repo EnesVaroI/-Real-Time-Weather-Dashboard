@@ -1,0 +1,95 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "ClimaDash/1.0.0": {
+        "dependencies": {
+          "Optivem.Platform.Infrastructure.Common.Serialization.Csv.CsvHelper": "1.0.6"
+        },
+        "runtime": {
+          "ClimaDash.dll": {}
+        }
+      },
+      "CsvHelper/12.1.2": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.4.0",
+          "System.Reflection.TypeExtensions": "4.4.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/CsvHelper.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.0.0"
+          }
+        }
+      },
+      "Microsoft.CSharp/4.4.0": {},
+      "Optivem.Platform.Core.Common.Serialization/1.0.6": {
+        "runtime": {
+          "lib/netcoreapp2.2/Optivem.Platform.Core.Common.Serialization.dll": {
+            "assemblyVersion": "1.0.6.0",
+            "fileVersion": "1.0.6.0"
+          }
+        }
+      },
+      "Optivem.Platform.Infrastructure.Common.Serialization.Csv.CsvHelper/1.0.6": {
+        "dependencies": {
+          "CsvHelper": "12.1.2",
+          "Optivem.Platform.Core.Common.Serialization": "1.0.6"
+        },
+        "runtime": {
+          "lib/netcoreapp2.2/Optivem.Platform.Infrastructure.Common.Serialization.Csv.CsvHelper.dll": {
+            "assemblyVersion": "1.0.6.0",
+            "fileVersion": "1.0.6.0"
+          }
+        }
+      },
+      "System.Reflection.TypeExtensions/4.4.0": {}
+    }
+  },
+  "libraries": {
+    "ClimaDash/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CsvHelper/12.1.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SpMsKw74xuAMsYZ+tSQsHF9UYlZm6E+LBSwDPukGCy1dYLVJwM6ZR7gFhKWDMh7OR/1ba8t4UV/RraMJKx+mog==",
+      "path": "csvhelper/12.1.2",
+      "hashPath": "csvhelper.12.1.2.nupkg.sha512"
+    },
+    "Microsoft.CSharp/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vvVR/B08YVghQ4jHEloxqw2ZWzEGE1AOA5E0DioUM3ujbXz6FD3AfB/0Jl2ohJPd0nXYGwmPe1En6HTsSriq1A==",
+      "path": "microsoft.csharp/4.4.0",
+      "hashPath": "microsoft.csharp.4.4.0.nupkg.sha512"
+    },
+    "Optivem.Platform.Core.Common.Serialization/1.0.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1eXL/jmxUG1sl5DJ5fma9s2JITVMDu03uNaPr9iIZYDT2C2ziJjWzIkHXHmpsbMkc6hzL8/KaAOh94UCNlAKSA==",
+      "path": "optivem.platform.core.common.serialization/1.0.6",
+      "hashPath": "optivem.platform.core.common.serialization.1.0.6.nupkg.sha512"
+    },
+    "Optivem.Platform.Infrastructure.Common.Serialization.Csv.CsvHelper/1.0.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-REPo2PeS/yGqSV8EUi+2DITkBASZFvfjqUh7F72rvigz2ARKGAoQ/1gIJaQc1E9ZU+8klkWbjTncqt0uVIxGpw==",
+      "path": "optivem.platform.infrastructure.common.serialization.csv.csvhelper/1.0.6",
+      "hashPath": "optivem.platform.infrastructure.common.serialization.csv.csvhelper.1.0.6.nupkg.sha512"
+    },
+    "System.Reflection.TypeExtensions/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-dkmh/ySlwnXJp/1qYP9uyKkCK1CXR/REFzl7abHcArxBcV91mY2CgrrzSRA5Z/X4MevJWwXsklGRdR3A7K9zbg==",
+      "path": "system.reflection.typeextensions/4.4.0",
+      "hashPath": "system.reflection.typeextensions.4.4.0.nupkg.sha512"
+    }
+  }
+}
