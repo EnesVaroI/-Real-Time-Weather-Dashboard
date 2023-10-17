@@ -1,0 +1,17 @@
+﻿<input type="text" @bind="searchText" @oninput="UpdateSuggestions" placeholder="Search city" />
+<ul class="suggestions">
+    @foreach (var suggestion in suggestions)
+    {
+        <li>@suggestion</li>
+    }
+</ul>
+
+@code {
+    private string searchText = string.Empty;
+    private List<string> suggestions = new List<string>();
+
+    private void UpdateSuggestions()
+    {
+
+    }
+}
