@@ -1,0 +1,142 @@
+﻿@page "/weather-forecast"
+
+@using ClimaDash.Models;
+@using System.Text.Json;
+@namespace ClimaDash.Views.Components.WeatherComponents
+
+@if (forecastData is not null)
+{
+    <div class="daily-forecasts">
+        <p class="today">Today's Forecast</p>
+        @foreach (var forecast in dailyForecasts)
+        {
+            <div class="forecast">
+                <div class="time-container">
+                    <p class="time">@forecast.Time</p>
+                </div>
+                <div class="weather">
+                    <img src=@($"https://openweathermap.org/img/wn/{forecast.Icon}@2x.png") alt="Weather Image" />
+                    <p class="temperature">@forecast.Temperature°</p>
+                </div>
+                <div class="wind">
+                    <p class="wind-degree"><i class="bi @CalculateWindDirection(forecast.WindDegree)" style="font-size: 2rem;"></i></p>
+                    <p class="wind-speed">@forecast.WindSpeed m/s</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="five-day-forecasts">
+        <p class="five-day">5-day Forecast</p>
+        @foreach (var forecast in fiveDayForecasts)
+        {
+            <div class="forecast">
+                <div class="weekday-container">
+                    <p class="weekday">@forecast.WeekDay</p>
+                </div>
+                <div class="temperature-container">
+                    <p class="temperature">@forecast.Temperature°</p>
+                </div>
+                <div class="image-container">
+                    <img src=@($"https://openweathermap.org/img/wn/{forecast.Icon}@2x.png") alt="Weather Image" />
+                </div>
+                <div class="description-container">
+                    <p class="description">@forecast.Description</p>
+                </div>
+                <div class="date-container">
+                    <p class="date">@forecast.Date</p>
+                </div>
+            </div>
+            @if (forecast != fiveDayForecasts.Last())
+            {
+                <hr class="separator" />
+            }
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public dynamic forecastData { get; set; }
+
+    DailyForecastData[] dailyForecasts;
+
+    FiveDayForecastData[] fiveDayForecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        dailyForecasts = new DailyForecastData[8];
+        fiveDayForecasts = new FiveDayForecastData[5];
+
+        base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (forecastData is null)
+        {
+            return;
+        }
+
+        foreach (int i in Enumerable.Range(0, 8))
+        {
+            var item = forecastData.GetProperty("list")[i];
+            var weather = item.GetProperty("weather")[0];
+            var main = item.GetProperty("main");
+            var wind = item.GetProperty("wind");
+
+            dailyForecasts[i] = new DailyForecastData() with
+            {
+                Icon = weather.GetProperty("icon").GetString(),
+                Temperature = (int)main.GetProperty("temp").GetDouble(),
+                Time = DateTime.ParseExact(item.GetProperty("dt_txt").GetString(), "yyyy-MM-dd HH:mm:ss", null)
+                    .ToString("h tt").ToUpper(),
+                WindSpeed = (int)wind.GetProperty("speed").GetDouble(),
+                WindDegree = (int)wind.GetProperty("deg").GetDouble()
+            };
+        }
+
+        foreach (int i in Enumerable.Range(0, 40).Where(i => i % 8 == 0))
+        {
+            var item = forecastData.GetProperty("list")[i];
+            var weather = item.GetProperty("weather")[0];
+            var main = item.GetProperty("main");
+
+            fiveDayForecasts[i / 8] = new FiveDayForecastData() with
+            {
+                Icon = weather.GetProperty("icon").GetString(),
+                Temperature = (int)main.GetProperty("temp").GetDouble(),
+                Description = weather.GetProperty("main").GetString(),
+                Date = DateTime.ParseExact(item.GetProperty("dt_txt").GetString(), "yyyy-MM-dd HH:mm:ss", null)
+                    .ToString("MM/dd"),
+                WeekDay = i == 0 ? "Today" : DateTimeOffset.FromUnixTimeSeconds(item.GetProperty("dt").GetInt64())
+                    .DayOfWeek.ToString()
+            };
+        }
+
+        await base.OnParametersSetAsync();
+    }
+
+    private string CalculateWindDirection(double windDegree) =>
+        windDegree switch
+        {
+            >= 22.5 and < 67.5 => "bi-arrow-up-right",
+            >= 67.5 and < 112.5 => "bi-arrow-up",
+            >= 112.5 and < 157.5 => "bi-arrow-up-left",
+            >= 157.5 and < 202.5 => "bi-arrow-left",
+            >= 202.5 and < 247.5 => "bi-arrow-down-left",
+            >= 247.5 and < 292.5 => "bi-arrow-down",
+            >= 292.5 and < 337.5 => "bi-arrow-down-right",
+            _ => "bi-arrow-right"
+        };
+
+    public record DailyForecastData(string Icon, int Temperature, string Time, int WindSpeed, int WindDegree)
+    {
+        public DailyForecastData() : this("01d", 0, "0:00 AM", 0, 0) { }
+    }
+
+    public record FiveDayForecastData(string Icon, int Temperature, string Description, string Date, string WeekDay)
+    {
+        public FiveDayForecastData() : this("01d", 0, "clear sky", "01/01", "Today") { }
+    }
+}

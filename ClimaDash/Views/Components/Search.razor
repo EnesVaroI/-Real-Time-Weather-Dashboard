@@ -1,0 +1,109 @@
+﻿@page "/search"
+
+@using ClimaDash.Models;
+@using ClimaDash.Services;
+@using Microsoft.AspNetCore.Components.Web
+@using CsvHelper
+@using CsvHelper.Configuration
+@using CsvHelper.Configuration.Attributes
+@using System.Globalization
+@using System.Text;
+@using CityInfo = System.Tuple<string?, double?, double?>
+@namespace ClimaDash.Views.Components
+@inject ICityService CityService
+@inject ICountryFlagService CountryFlagService
+
+<input type="text" @oninput="OnInputHandler" @onkeypress="OnKeyPressAsync" @onchange="OnChangeAsync" placeholder="Search city" list="suggestions">
+<datalist id="suggestions">
+    @foreach (var suggestion in suggestions)
+    {
+        <option value="@suggestion"></option>
+    }
+</datalist>
+
+@code {
+    [Parameter]
+    public string? searchText { get; set; } = "";
+
+    public CityInfo location;
+
+    private List<CityData> suggestions;
+
+    private List<string?> flags;
+
+    [Inject]
+    private ICityService _cityService { get; init; }
+
+    [Inject]
+    private ICountryFlagService _countryFlagService { get; init; }
+
+    [Parameter]
+    public EventCallback<CityInfo> OnSearch { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        suggestions = new();
+
+        flags = new();
+
+        await base.OnInitializedAsync();
+    }
+
+    private void OnInputHandler(ChangeEventArgs e)
+    {
+        searchText = e.Value.ToString();
+
+        UpdateSuggestions();
+    }
+
+    private async Task OnKeyPressAsync(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            if (OnSearch.HasDelegate)
+            {
+                location = new(searchText, null, null);
+                await OnSearch.InvokeAsync(location);
+            }
+        }
+    }
+
+    private async Task OnChangeAsync() =>
+        await OnSearch.InvokeAsync(new(searchText, null, null));
+
+    private void UpdateSuggestions()
+    {
+        suggestions.Clear();
+
+        if (searchText == null || searchText == "")
+        {
+            return;
+        }
+
+        suggestions = _cityService.GetCities(searchText); 
+    }
+
+    private async Task GetFlags()
+    {
+        foreach (var suggestion in suggestions)
+        {
+            flags.Add(await _countryFlagService.GetFlagForCountryAsync(suggestion.Country));
+        }
+    }
+
+    void RemoveDiacritics(ref string input)
+    {
+        string normalizedString = input.Normalize(NormalizationForm.FormD);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        foreach (char c in normalizedString)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+
+        input = stringBuilder.ToString();
+    }
+}

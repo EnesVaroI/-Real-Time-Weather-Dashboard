@@ -1,0 +1,31 @@
+﻿@page "/"
+
+@using ClimaDash.Views.Components
+@using CityInfo = System.Tuple<string?, double?, double?>
+@namespace ClimaDash.Views
+
+<LightDarkSwitch />
+
+<UserPreferences OnPrefsChanged="StateHasChanged" />
+
+<CurrentLocation OnGet="SetLocation" />
+
+<Search OnSearch="SetLocation" />
+
+<Weather @bind-location="@location" />
+
+@code {
+    private CityInfo location;
+
+    protected override async Task OnInitializedAsync()
+    {
+        location = new CityInfo("London", null, null);
+
+        await base.OnInitializedAsync();
+    }
+
+    void SetLocation(CityInfo location)
+    {
+        this.location = location;
+    }
+}

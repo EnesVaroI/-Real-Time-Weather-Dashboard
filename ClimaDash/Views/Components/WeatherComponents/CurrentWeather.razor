@@ -1,0 +1,150 @@
+﻿@page "/weather-current"
+
+@using ClimaDash.Models;
+@using System.Text.Json;
+@using ClimaDash.Services;
+@namespace ClimaDash.Views.Components.WeatherComponents
+@inject ICityPictureService CityPictureService
+@inject ICountryCodeService CountryCodeService
+
+@if (weatherData is not null)
+{
+    <div class="weather-info" style="background-image: url(@picture)">
+        <img src=@($"https://openweathermap.org/img/wn/{icon}@2x.png") alt="Weather Image">
+        <div class="location">
+            <p class="city">@name</p>
+            <p class="country">@countryName</p>
+        </div>
+        <p class="date">@date</p>
+        <p class="temperature">@temperature°</p>
+        <p class="description">@description</p>
+    </div>
+
+    <div class="weather-container">
+        <h2 class="highlight-title">Today's Highlights</h2>
+        <div class="highlight-item">
+            <i class="bi bi-brightness-alt-high" style="font-size: 1rem;"></i>
+            <span class="highlight-label">Sunrise & Sunset:</span>
+            <span class="highlight-value">@sunrise - @sunset</span>
+        </div>
+        <div class="highlight-item">
+            <i class="bi bi-thermometer-sun"></i>
+            <span class="highlight-label">Temperature:</span>
+            <span class="highlight-value">@feels_like°C (Feels like X°C)</span>
+        </div>
+        <div class="highlight-item">
+            <i class="bi bi-moisture"></i>
+            <span class="highlight-label">Humidity:</span>
+            <span class="highlight-value">@humidity%</span>
+        </div>
+        <div class="highlight-item">
+            <i class="bi bi-arrows-collapse"></i>
+            <span class="highlight-label">Pressure:</span>
+            <span class="highlight-value">@pressure hPa</span>
+        </div>
+        <div class="highlight-item">
+            <i class="bi bi-eye"></i>
+            <span class="highlight-label">Visibility:</span>
+            <span class="highlight-value">@visibility km</span>
+        </div>
+        <div class="highlight-item">
+            <i class="bi bi-wind"></i>
+            <span class="highlight-label">Wind Speed & Direction:</span>
+            <span class="highlight-value">@wind_speed m/s</span>
+        </div>
+        <div class="highlight-item">
+            <i class="bi bi-water"></i>
+            <span class="highlight-label">UV Index:</span>
+            <span class="highlight-value">X</span>
+        </div>
+        <div class="highlight-item">
+            <i class="bi bi-droplet"></i>
+            <span class="highlight-label">Dew Point:</span>
+            <span class="highlight-value">X°C</span>
+        </div>
+        <div class="highlight-item">
+            <i class="bi bi-cloud-moon"></i>
+            <span class="highlight-label">Moon Phase:</span>
+            <span class="highlight-value">X%</span>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public dynamic weatherData { get; set; }
+
+    [Inject]
+    private ICountryCodeService _countryCodeService { get; init; }
+
+    [Inject]
+    private ICityPictureService _cityPictureService { get; init; }
+
+    string icon, name, countryName, date, description, picture;
+
+    int temperature;
+
+    string sunrise, sunset;
+
+    int humidity, pressure, visibility, feels_like, wind_speed;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (weatherData is null)
+        {
+            return;
+        }
+
+        await GenerateWeatherCard();
+
+        AddTodaysHighlights();
+
+        await base.OnParametersSetAsync();
+    }
+
+    async Task GenerateWeatherCard()
+    {
+        icon = weatherData.GetProperty("weather")[0].GetProperty("icon").GetString();
+
+        name = weatherData.GetProperty("name").GetString();
+
+        string countryCode = weatherData.GetProperty("sys").GetProperty("country").GetString();
+        countryName = await _countryCodeService.GetCountryByCode(countryCode);
+
+        long unixTimestamp = weatherData.GetProperty("dt").GetInt64();
+        date = DateConverter(unixTimestamp, "dddd, d MMMM");
+
+        temperature = (int)weatherData.GetProperty("main").GetProperty("temp").GetDouble();
+
+        description = weatherData.GetProperty("weather")[0].GetProperty("description").GetString();
+
+        picture = await _cityPictureService.GetCityPictureAsync(name);
+    }
+
+    void AddTodaysHighlights()
+    {
+        long sunriseUnixTimestamp = weatherData.GetProperty("sys").GetProperty("sunrise").GetInt64();
+        sunrise = DateConverter(sunriseUnixTimestamp, "h:mm tt");
+
+        long sunsetUnixTimestamp = weatherData.GetProperty("sys").GetProperty("sunset").GetInt64();
+        sunset = DateConverter(sunsetUnixTimestamp, "h:mm tt");
+
+        humidity = weatherData.GetProperty("main").GetProperty("humidity").GetInt32();
+        
+        pressure = weatherData.GetProperty("main").GetProperty("pressure").GetInt32();
+        
+        visibility = weatherData.GetProperty("visibility").GetInt32();
+        
+        feels_like = (int)weatherData.GetProperty("main").GetProperty("feels_like").GetDouble();
+        
+        wind_speed = (int)weatherData.GetProperty("wind").GetProperty("speed").GetDouble();
+    }
+
+    string DateConverter(long unixTimestamp, string format)
+    {
+        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp);
+        return dateTimeOffset.LocalDateTime.ToString(format);
+    }
+
+    public record Weather(string Icon, string CityName, string CountryName, string Date, int Temperature, string Description);
+}

@@ -1,0 +1,32 @@
+﻿@page "/light-dark-switch"
+
+@using Microsoft.AspNetCore.Components.Web
+@namespace ClimaDash.Views.Components
+
+<div>
+    <button class="mode-switch" @onclick="ToggleMode">
+        <div class="button-icon">
+            <i class="bi @(_isDarkMode ? "bi-brightness-high" : "bi-moon")" style="font-size: 1.2rem;"></i>
+        </div>
+    </button>
+</div>
+
+@code {
+
+    private bool _isDarkMode;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isDarkMode = true;
+
+        await base.OnInitializedAsync();
+    }
+
+    private void ToggleMode()
+    {
+        _isDarkMode = !_isDarkMode;
+
+        // Implement your logic to switch between light and dark modes
+        // Typically, you would change CSS classes or apply a theme here.
+    }
+}

@@ -1,0 +1,127 @@
+﻿@page "/weather"
+
+@using ClimaDash.Models
+@using ClimaDash.Services
+@using ClimaDash.Services.WeatherServices;
+@using ClimaDash.Views.Components.WeatherComponents
+@using Microsoft.AspNetCore.WebUtilities
+@using CityInfo = System.Tuple<string?, double?, double?>
+@namespace ClimaDash.Views.Components
+@implements IDisposable
+@inject ICityService CityService
+@inject ICountryCodeService CountryCodeService
+@inject IWeatherService WeatherService
+@inject ICurrentWeatherService CurrentWeatherService
+@inject IWeatherForecastService WeatherForecastService
+@inject IAirPollutionService AirPollutionService
+@inject IWeatherMapService WeatherMapService
+@inject NavigationManager Navigation
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@{
+    <CurrentWeather weatherData="weatherData" />
+
+    <WeatherForecast forecastData="forecastData" />
+
+    // <AirPollution pollutionData="pollutionData" />
+
+    @*<WeatherMap weatherMapTile="weatherMapTile" />*@
+
+    <WeatherWidget />
+
+    shouldRender = false;
+}
+
+@code {
+    [Parameter]
+    public CityInfo location { get; set; }
+
+    [Parameter]
+    public EventCallback<CityInfo> locationChanged { get; set; }
+
+    private dynamic weatherData;
+
+    private dynamic pollutionData;
+
+    private dynamic forecastData;
+
+    private byte[] weatherMapTile;
+
+    string? errorMessage;
+
+    bool shouldRender;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (location is null)
+        {
+            return;
+        }
+
+        try
+        {
+            if (location.Item1 is not null)
+            {
+                weatherData = await CurrentWeatherService.GetCurrentWeatherAsync(location.Item1);
+                forecastData = await WeatherForecastService.GetWeatherForecastAsync(location.Item1);
+
+            }
+            if (location.Item2 is not null && location.Item3 is not null)
+            {
+                weatherData = await CurrentWeatherService.GetCurrentWeatherAsync(location.Item2.Value, location.Item3.Value);
+                forecastData = await WeatherForecastService.GetWeatherForecastAsync(location.Item2.Value, location.Item3.Value);
+                pollutionData = await AirPollutionService.GetAirPollutionAsync(location.Item2.Value, location.Item3.Value);
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An error occurred: " + ex.Message;
+            return;
+        }
+        finally
+        {
+            shouldRender = true;
+        }
+        errorMessage = null;
+
+        await AddToDatabase();
+
+        // Navigation.NavigateTo($"/weather?lat={latitude}&lon={longitude}");
+
+        await base.OnParametersSetAsync();
+    }
+
+    async Task AddToDatabase()
+    {
+        var name = weatherData.GetProperty("name").GetString();
+        var latitude = weatherData.GetProperty("coord").GetProperty("lat").GetDouble();
+        var longitude = weatherData.GetProperty("coord").GetProperty("lon").GetDouble();
+        var countryCode = weatherData.GetProperty("sys").GetProperty("country").GetString();
+
+        var countryName = await CountryCodeService.GetCountryByCode(countryCode);
+
+        var city = new CityData
+        {
+            Name = name,
+            Longitude = longitude,
+            Latitude = latitude,
+            Country = countryName
+        };
+
+        CityService.AddCityIfNotExists(city);
+    }
+
+    protected override bool ShouldRender()
+    {
+        return shouldRender;
+    }
+
+    public void Dispose()
+    {
+        _ = location;
+    }
+}

@@ -1,0 +1,54 @@
+﻿@page "/weathermap/{layer}/{zoomLevel}/{x}/{y}"
+
+@using System.Net.Mime
+@using ClimaDash.Services.Implementations.WeatherImplementations;
+@using ClimaDash.Services.WeatherServices;
+@using Microsoft.JSInterop;
+@namespace ClimaDash.Views.Components.WeatherComponents
+@inject IWeatherMapService WeatherMapService
+@inject IJSRuntime JSRuntime
+
+<div class="weather-map">
+    @if (weatherMapTile is null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <img src="data:image/png;base64,@(Convert.ToBase64String(weatherMapTile))" alt="Weather Map Tile" />
+        <div id="map" style="height: 400px;"></div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string layer { get; set; }
+
+    [Parameter]
+    public int zoomLevel { get; set; }
+
+    [Parameter]
+    public int x { get; set; }
+
+    [Parameter]
+    public int y { get; set; }
+
+    [Parameter]
+    public byte[] weatherMapTile { get; set; }
+
+    private ElementReference mapContainer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        layer = "clouds_new"; zoomLevel = 0; x = 0; y = 0;
+
+        weatherMapTile = await WeatherMapService.GetWeatherMapTileAsync(layer, zoomLevel, x, y);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine(firstRender);
+
+        // await JSRuntime.InvokeVoidAsync("initializeMap", mapContainer, layer, zoomLevel, x, y);
+    }
+}

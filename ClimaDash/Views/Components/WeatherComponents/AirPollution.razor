@@ -1,0 +1,54 @@
+﻿@page "/air-pollution"
+
+@using ClimaDash.Services;
+@using ClimaDash.Services.WeatherServices;
+@namespace ClimaDash.Views.Components.WeatherComponents
+@inject IAirPollutionService AirPollutionService
+@inject IUserSettingsService UserSettingsService
+
+<h3>Air Pollution</h3>
+
+<div class="air-pollution-list">
+    @if (pollutionData is not null)
+    {   
+        <div class="dt">
+            <h4>Dt</h4>
+            <p>dt: @list.GetProperty("dt").GetInt32()</p>
+        </div>
+
+        <div class="main">
+            <h4>Main</h4>
+            <p>aqi: @list.GetProperty("main").GetProperty("aqi").GetInt32()</p>
+        </div>
+
+        <div class="components">
+            <h4>Components</h4>
+            <p>co: @list.GetProperty("components").GetProperty("co").GetDouble()</p>
+            <p>no: @list.GetProperty("components").GetProperty("no").GetDouble()</p>
+            <p>no2: @list.GetProperty("components").GetProperty("no2").GetDouble()</p>
+            <p>o3: @list.GetProperty("components").GetProperty("o3").GetDouble()</p>
+            <p>so2: @list.GetProperty("components").GetProperty("so2").GetDouble()</p>
+            <p>pm2_5: @list.GetProperty("components").GetProperty("pm2_5").GetDouble()</p>
+            <p>pm10: @list.GetProperty("components").GetProperty("pm10").GetDouble()</p>
+            <p>nh3: @list.GetProperty("components").GetProperty("nh3").GetDouble()</p>
+        </div>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public dynamic pollutionData { get; set; }
+
+    private dynamic list;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (pollutionData is not null)
+        {
+            list = pollutionData.GetProperty("list")[0];
+        }
+
+        await base.OnParametersSetAsync();
+    }
+}

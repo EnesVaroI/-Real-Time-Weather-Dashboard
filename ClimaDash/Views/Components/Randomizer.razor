@@ -1,0 +1,29 @@
+﻿@page "/randomizer"
+
+@using Microsoft.AspNetCore.Components.Web
+@using CityInfo = System.Tuple<string?, double?, double?>
+@namespace ClimaDash.Views.Components
+
+<div>
+    <button class="randomizer" @onclick="RandomizeAsync">
+        <div class="button-icon">
+            <i class="bi bi-dice-5" style="font-size: 1.2rem;"></i>
+        </div>
+    </button>
+</div>
+
+@functions {
+    private static Random random = new Random();
+
+    [Parameter]
+    public EventCallback<CityInfo> OnRandomize { get; set; }
+
+    private async Task RandomizeAsync()
+    {
+        var latitude = random.NextDouble() * 180 - 90;
+        var longitude = random.NextDouble() * 360 - 180;
+
+        CityInfo location = new(null, latitude, longitude);
+        await OnRandomize.InvokeAsync(location);
+    }
+}

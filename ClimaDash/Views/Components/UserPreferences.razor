@@ -1,0 +1,58 @@
+﻿@page "/pref"
+
+@using ClimaDash.Services;
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop;
+@using static ClimaDash.Models.SupportedLanguages
+@namespace ClimaDash.Views.Components
+@inject IUserSettingsService UserSettingsService
+
+<div class="user-settings">
+    <div class="language-button dropdown">
+        <button id="dropdownMenuButton" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            @_userSettingsService.Language.ToUpper()
+        </button>
+        <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            @foreach (var language in Languages)
+            {
+                <a href="#" class="dropdown-item" @onclick='() => SendLanguage(language.Key)'>@language.Value</a>
+            }
+        </div>
+    </div>
+
+    <div class="temperature-button-container">
+        <button class="temperature-button @(IsActive("standard") ? "active" : "")" @onclick='() => SendTemperatureUnit("standard")' style="GetButtonStyle('K')">°K</button>
+        <button class="temperature-button @(IsActive("metric") ? "active" : "")" @onclick='() => SendTemperatureUnit("metric")' style="GetButtonStyle('C')">°C</button>
+        <button class="temperature-button @(IsActive("imperial") ? "active" : "")" @onclick='() => SendTemperatureUnit("imperial")' style="GetButtonStyle('F')">°F</button>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    private IUserSettingsService _userSettingsService { get; init; }
+
+    [Parameter]
+    public EventCallback OnPrefsChanged { get; set; }
+
+    private bool IsActive(string unit)
+    {
+        return _userSettingsService.TemperatureUnit == unit;
+    }
+
+    private string GetButtonStyle(string unit)
+    {
+        return unit == _userSettingsService.TemperatureUnit ? "background-color: #0056b3;" : "";
+    }
+
+    private async Task SendLanguage(string language)
+    {
+        _userSettingsService.Language = language;
+        await OnPrefsChanged.InvokeAsync();
+    }
+
+    private async Task SendTemperatureUnit(string unit)
+    {
+        _userSettingsService.TemperatureUnit = unit;
+        await OnPrefsChanged.InvokeAsync();
+    }
+}

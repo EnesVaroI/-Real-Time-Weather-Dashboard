@@ -1,0 +1,28 @@
+﻿@page "/weather-widget"
+
+@using Microsoft.JSInterop;
+@namespace ClimaDash.Views.Components.WeatherComponents
+@inject IJSRuntime JSRuntime
+
+<div id="openweathermap-widget-21" class="weather-widget"></div>
+
+@code {
+    string _apiKey;
+
+    protected override void OnInitialized()
+    {
+        _apiKey = Environment.GetEnvironmentVariable("OPENWEATHER_API_KEY");
+
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("createWeatherWidget", "openweathermap-widget-21", _apiKey);
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

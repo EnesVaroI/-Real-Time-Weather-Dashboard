@@ -1,0 +1,45 @@
+﻿@page "/location"
+
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using ClimaDash
+@using CityInfo = System.Tuple<string?, double?, double?>
+@namespace ClimaDash.Views.Components
+@inject IJSRuntime JSRuntime
+
+<div class="button-container">
+    <button class="custom-button" @onclick="async () => { await GetCurrentLocation(); SendCurrentLocation(); }">
+        <div class="button-icon">
+            <i class="bi bi-crosshair" style="font-size: 1.4rem;"></i>
+        </div>
+        Current Location
+    </button>
+</div>
+
+@code {
+    private static CityInfo currentLocation;
+
+    [Parameter]
+    public EventCallback<CityInfo> OnGet { get; set; }
+
+    private async Task GetCurrentLocation()
+    {
+        await JSRuntime.InvokeVoidAsync("getLocation");
+    }
+
+    private async Task SendCurrentLocation()
+    {
+        if (OnGet.HasDelegate)
+        {
+            await OnGet.InvokeAsync(currentLocation);
+        }
+    }
+
+    [JSInvokable("LocationReceived")]
+    public static Task<CityInfo> LocationReceived(double? latitude, double? longitude)
+    {
+        currentLocation = new(null, latitude, longitude);
+        
+        return Task.FromResult(currentLocation);
+    }
+}
