@@ -1,0 +1,49 @@
+/* _content/ClimaDash/Pages/Shared/_Layout.cshtml.rz.scp.css */
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand[b-ivomk3rxmk] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+a[b-ivomk3rxmk] {
+  color: #0077cc;
+}
+
+.btn-primary[b-ivomk3rxmk] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active[b-ivomk3rxmk], .nav-pills .show > .nav-link[b-ivomk3rxmk] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top[b-ivomk3rxmk] {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom[b-ivomk3rxmk] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow[b-ivomk3rxmk] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy[b-ivomk3rxmk] {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+.footer[b-ivomk3rxmk] {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}

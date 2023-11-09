@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "dgSpecHash": "blosx+/72MAJjL9jZxeWKmFMPDTwsJH5uGcHeTWMmDXNjy1zMCNfk5A8ENMU0Kcn8MekxJBNvu5uuFwqjQneCA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Mehmet\\source\\repos\\ClimaDash\\ClimaDash.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Mehmet\\.nuget\\packages\\csvhelper\\12.1.2\\csvhelper.12.1.2.nupkg.sha512",
+    "C:\\Users\\Mehmet\\.nuget\\packages\\htmlagilitypack\\1.11.54\\htmlagilitypack.1.11.54.nupkg.sha512",
+    "C:\\Users\\Mehmet\\.nuget\\packages\\microsoft.csharp\\4.4.0\\microsoft.csharp.4.4.0.nupkg.sha512",
+    "C:\\Users\\Mehmet\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\Mehmet\\.nuget\\packages\\optivem.platform.core.common.serialization\\1.0.6\\optivem.platform.core.common.serialization.1.0.6.nupkg.sha512",
+    "C:\\Users\\Mehmet\\.nuget\\packages\\optivem.platform.infrastructure.common.serialization.csv.csvhelper\\1.0.6\\optivem.platform.infrastructure.common.serialization.csv.csvhelper.1.0.6.nupkg.sha512",
+    "C:\\Users\\Mehmet\\.nuget\\packages\\pexelsdotnetsdk\\1.0.11\\pexelsdotnetsdk.1.0.11.nupkg.sha512",
+    "C:\\Users\\Mehmet\\.nuget\\packages\\system.reflection.typeextensions\\4.4.0\\system.reflection.typeextensions.4.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}
