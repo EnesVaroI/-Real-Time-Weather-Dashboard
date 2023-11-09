@@ -9,18 +9,6 @@ namespace ClimaDash.Application
     {
         public static void Main(string[] args)
         {
-            //Things to do:
-            //_ViewImports.razor / global using
-            //Weather.razor cleanup
-            //WeatherController API
-            //remove CityInfo
-            //WeatherHub
-            //Routes
-            //add tag helpers to index
-            //CSS
-            //Dockerise
-            //Blazorise, BlazorModal, or other custom implementations
-
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
